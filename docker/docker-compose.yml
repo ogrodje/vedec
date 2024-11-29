@@ -1,0 +1,50 @@
+services:
+
+  es:
+    # image: bitnami/elasticsearch:latest
+    build:
+      dockerfile: ./docker/es.Dockerfile
+    container_name: vedec-es
+    ports:
+      - "0.0.0.0:9200:9200"
+      - "0.0.0.0:9300:9300"
+    environment:
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -u \"elastic:$ELASTICSEARCH_PASSWORD\" -f http://localhost:9200/_cluster/health || exit 1" ]
+      interval: 10s
+      retries: 10
+
+  vedec:
+    image: ghcr.io/ogrodje/vedec
+    environment:
+      PORT: 4441
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      HYGRAPH_URL: ${HYGRAPH_URL}
+    ports:
+      - "0.0.0.0:4441:4441"
+    command: [ "server",
+               "-P", "4441",
+               "--elasticSearchURL", "http://es:9200",
+               "--elasticSearchPassword", "$ELASTICSEARCH_PASSWORD",
+               "--hygraphURL", "$HYGRAPH_URL" ]
+    depends_on:
+      - es
+
+  vedec-index:
+    image: ghcr.io/ogrodje/vedec
+    environment:
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      HYGRAPH_URL: ${HYGRAPH_URL}
+    command: [ "index",
+               "-P", "4441",
+               "--elasticSearchURL", "http://es:9200",
+               "--elasticSearchPassword", "$ELASTICSEARCH_PASSWORD",
+               "--hygraphURL", "$HYGRAPH_URL" ]
+    depends_on:
+      - es

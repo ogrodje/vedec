@@ -1,0 +1,150 @@
+### Basic search
+GET http://localhost:9200/episodes/_search
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "query": {
+    "match": {
+      "name": "rust"
+    }
+  }
+}
+
+### Bit more advanced search
+< {%
+    request.variables.set("query", "S02E04")
+%}
+GET http://localhost:9200/episodes/_search
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "minimum_should_match": 1,
+      "should": [
+        {
+          "match": {
+            "summary": {
+              "query": "{{query}}",
+              "boost": 3
+            }
+          }
+        },
+        {
+          "match": {
+            "multimediaProducers": {
+              "query": "{{query}}",
+              "boost": 2
+            }
+          }
+        },
+        {
+          "match": {
+            "name": {
+              "query": "{{query}}",
+              "boost": 4,
+              "fuzziness": "AUTO"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+### Bit more advanced search 2
+< {%
+    request.variables.set("query", "rust")
+%}
+// GET http://localhost:9200/episodes/_search
+GET http://localhost:4442/search
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "minimum_should_match": 1,
+      "should": [
+        {
+          "multi_match": {
+            "query": "{{query}}",
+             "fields": [
+             "summary", "machineSummary", "code", "show.name", "topics.name",
+             "host.fullName", "cohosts.fullName",
+             "consultants.fullName", "designers.fullName",
+             "guests.fullName",
+             "multimediaProducers.fullName"
+             ]
+          }
+        },
+        {
+          "match": {
+            "host.fullName": {
+              "query": "{{query}}",
+              "boost": 2
+            }
+          }
+        },
+        {
+          "match": {
+            "cohosts.fullName": {
+              "query": "{{query}}",
+              "boost": 2
+            }
+          }
+        },
+        {
+          "match": {
+            "quests.fullName": {
+              "query": "{{query}}",
+              "boost": 2
+            }
+          }
+        },
+        {
+          "match": {
+            "name": {
+              "query": "{{query}}",
+              "boost": 4,
+              "fuzziness": "AUTO"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "highlight": {
+    "fields": {
+      "summary": {},
+      "machineSummary": {},
+      "name": {}
+    }
+  },
+  "aggs": {
+    "range": {
+      "date_range": {
+        "field": "airedAt",
+        "format": "MM-yyyy",
+        "ranges": [
+          { "to": "now-10M/M" },
+          { "from": "now-10M/M" }
+        ]
+      }
+    },
+    "shows": {
+      "terms": {
+        "field": "show.name.keyword",
+        "size": 10
+      }
+    },
+    "topics": {
+      "terms": {
+        "field": "topic.name.keyword",
+        "size": 10
+      }
+    }
+  }
+}

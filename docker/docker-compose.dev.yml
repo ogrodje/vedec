@@ -1,0 +1,61 @@
+services:
+  es:
+    volumes:
+      - esdata:/bitnami/elasticsearch/data
+    environment:
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - ELASTICSEARCH_ENABLE_SECURITY=true
+      - ELASTICSEARCH_SKIP_TRANSPORT_TLS=true
+      - ELASTICSEARCH_ENABLE_REST_TLS=false
+      - XPACK_SECURITY_ENABLED=true
+      - SERVER_SSL_ENABLED=false
+      - XPACK_MONITORING_ENABLED=false
+      - discovery.type=single-node
+      - http.cors.enabled=true
+      - xpack.security.enabled=true
+      - xpack.security.enrollment.enabled=true
+      - xpack.monitoring.enabled=true
+      - xpack.ml.enabled=true
+      - xpack.graph.enabled=true
+      - xpack.watcher.enabled=false
+      - xpack.security.authc.providers=[]
+      - http.cors.allow-origin=*
+      - http.cors.allow-methods=*
+      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+      - http.cors.allow-credentials=true
+  kibana:
+    container_name: vedec-kibana
+    image: bitnami/kibana:latest
+    depends_on:
+      - es
+    ports:
+      - "0.0.0.0:5601:5601"
+    environment:
+      - KIBANA_ELASTICSEARCH_URL=es
+      - KIBANA_ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - KIBANA_CREATE_USER=yes
+      - KIBANA_PASSWORD=${ELASTICSEARCH_PASSWORD}
+
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'" ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+    volumes:
+      - kibanadata:/bitnami/kibana
+
+volumes:
+  esdata:
+    driver: "local"
+    driver_opts:
+      type: none
+      device: /Users/oto/ServiceData/vedec-es
+      o: bind
+  kibanadata:
+    driver: "local"
+    driver_opts:
+      type: none
+      device: /Users/oto/ServiceData/vedec-kibana
+      o: bind
