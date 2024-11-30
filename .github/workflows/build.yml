@@ -102,7 +102,7 @@ jobs:
           ./bin/og-prod.sh pull && \
           ./bin/og-prod.sh up -d --remove-orphans
 
-      - name: Reindex
+      - name: Reindex content
         run: |
           export DOCKER_HOST=ssh://low
           ./bin/og-prod.sh run --remove-orphans --rm -d vedec-index
