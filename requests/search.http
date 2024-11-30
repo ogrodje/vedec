@@ -190,3 +190,8 @@ Content-Type: application/json
   ],
   "text": "Danes je lep sončen dan. Jutri je sobota. Potem nedelja."
 }
+
+### Cors test
+OPTIONS {{vedec-server}}/query?query=oto+brglez
+Access-Control-Request-Method: GET
+Origin: https://ogrodje.si

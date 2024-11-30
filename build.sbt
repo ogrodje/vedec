@@ -1,8 +1,27 @@
 import com.typesafe.sbt.packager.docker.Cmd
 
+import System.getenv
+import scala.util.Try
+
 val scala3Version = "3.6.1"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
+
+lazy val envPort: String = Option(getenv("PORT")).getOrElse("4443")
+lazy val esPassword      = Try(getenv("ELASTICSEARCH_PASSWORD")).get
+lazy val hyGraphUrl      = Try(getenv("HYGRAPH_URL")).get
+
+lazy val serverArgs: Seq[String] = Seq(
+  s"server",
+  "--port",
+  envPort,
+  "--elasticSearchURL",
+  "http://localhost:9200",
+  "--elasticSearchPassword",
+  esPassword,
+  "--hygraphURL",
+  hyGraphUrl
+)
 
 lazy val root = project
   .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -25,6 +44,8 @@ lazy val root = project
   .settings(
     Compile / mainClass              := Some("Main"),
     assembly / mainClass             := Some("Main"),
+    reStart / mainClass              := Some("Main"),
+    reStartArgs                      := serverArgs,
     assembly / assemblyJarName       := "vedec.jar",
     assembly / assemblyMergeStrategy := {
       case PathList("module-info.class")                        =>
@@ -42,7 +63,6 @@ lazy val root = project
     }
   )
   .settings(
-    Compile / mainClass             := Some("Main"),
     Compile / discoveredMainClasses := Seq(),
     dockerExposedPorts              := Seq(4441),
     dockerExposedUdpPorts           := Seq.empty[Int],

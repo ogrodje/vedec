@@ -4,8 +4,13 @@ import zio.http.*
 import eu.timepit.refined.auto.*
 import io.circe.Json
 import zio.ZIO.{logError, logInfo}
+import zio.http.Header.AccessControlAllowOrigin
+import zio.http.Middleware.{cors, CorsConfig}
 
 final case class VedecServer(private val config: Config):
+  private val corsConfig: CorsConfig =
+    CorsConfig(allowedOrigin = _ => Some(AccessControlAllowOrigin.All))
+
   private def bodyToJson(body: Body): Task[Json] =
     body.asString.flatMap(json => ZIO.fromEither(io.circe.parser.parse(json)))
 
@@ -30,17 +35,18 @@ final case class VedecServer(private val config: Config):
         _          <- logInfo(s"Served query request for $rawQuery")
       yield response
     }
-  ).handleErrorZIO(e => logError(s"Boom w/ $e").as(Response.badRequest(s"Boom w/ $e")))
+  ).handleErrorZIO(e => logError(s"Boom w/ $e").as(Response.badRequest(s"Boom w/ $e"))) @@ cors(corsConfig)
 
   def server: URIO[ElasticSearchIndex & Server, Nothing] = Server.serve(routes)
 
 object VedecServer:
   def run(config: Config) =
-    VedecServer(config).server
-      .provide(
-        Config.fromConfig(config),
-        Client.default,
-        Server.defaultWithPort(config.port),
-        ElasticSearch.layer,
-        ElasticSearchIndex.layer(IndexName.unsafeFrom("episodes"))
-      )
+    ZIO.logInfo(s"Booting server on port ${config.port}") *>
+      VedecServer(config).server
+        .provide(
+          Config.fromConfig(config),
+          Client.default,
+          Server.defaultWithPort(config.port),
+          ElasticSearch.layer,
+          ElasticSearchIndex.layer(IndexName.unsafeFrom("episodes"))
+        )
