@@ -1,0 +1,26 @@
+services:
+  es:
+    image: ghcr.io/ogrodje/elasticsearch:latest
+    restart: always
+    volumes:
+      - esdata-prod:/bitnami/elasticsearch/data
+
+  vedec:
+    image: ghcr.io/ogrodje/vedec:latest
+    ports:
+      - "0.0.0.0:4441:4441"
+    restart: always
+
+  vedec-index:
+    image: ghcr.io/ogrodje/vedec:latest
+    restart: no
+    profiles:
+      - optional
+
+volumes:
+  esdata-prod:
+    driver: "local"
+    driver_opts:
+      type: none
+      device: /home/oto/Projects/esdata-prod/data
+      o: bind

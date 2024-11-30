@@ -6,11 +6,29 @@ services:
       dockerfile: ./docker/es.Dockerfile
     image: ghcr.io/ogrodje/elasticsearch:latest
     container_name: vedec-es
-    ports:
-      - "0.0.0.0:9200:9200"
-      - "0.0.0.0:9300:9300"
     environment:
-      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - ELASTICSEARCH_ENABLE_SECURITY=true
+      - ELASTICSEARCH_SKIP_TRANSPORT_TLS=true
+      - ELASTICSEARCH_ENABLE_REST_TLS=false
+      - XPACK_SECURITY_ENABLED=true
+      - SERVER_SSL_ENABLED=false
+      - XPACK_MONITORING_ENABLED=false
+      - discovery.type=single-node
+      - http.cors.enabled=true
+      - xpack.security.enabled=true
+      - xpack.security.enrollment.enabled=true
+      - xpack.monitoring.enabled=true
+      - xpack.ml.enabled=true
+      - xpack.graph.enabled=true
+      - xpack.watcher.enabled=false
+      - xpack.security.authc.providers=[]
+      - http.cors.allow-origin=*
+      - http.cors.allow-methods=*
+      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+      - http.cors.allow-credentials=true
     deploy:
       resources:
         limits:
@@ -27,8 +45,7 @@ services:
       PORT: 4441
       ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
       HYGRAPH_URL: ${HYGRAPH_URL}
-    ports:
-      - "0.0.0.0:4441:4441"
+
     command: [ "server",
                "-P", "4441",
                "--elasticSearchURL", "http://es:9200",

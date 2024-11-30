@@ -10,6 +10,8 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+  ELASTICSEARCH_PASSWORD: ${{ secrets.ELASTICSEARCH_PASSWORD }}
+  HYGRAPH_URL: ${{ secrets.HYGRAPH_URL }}
 
 jobs:
   build:
@@ -71,10 +73,14 @@ jobs:
       - run: sbt "docker:publish"
         if: ${{ github.ref == 'refs/heads/main' }}
 
-#       - name: Deploy to production
-#         if: ${{ github.ref == 'refs/heads/main' }}
-#         run: |
-#           export DOCKER_HOST=ssh://low
-#           ./bin/tttm-prod.sh pull && \
-#             ./bin/tttm-prod.sh up -d --remove-orphans
-#
+      - name: Deploy to production
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          export DOCKER_HOST=ssh://low
+          ./bin/og-prod.sh pull && \
+            ./bin/og-prod.sh up -d --remove-orphans
+
+      - name: Reindex
+        run: |
+          export DOCKER_HOST=ssh://low
+          ./bin/og-prod.sh run --remove-orphans --rm -d vedec-index
