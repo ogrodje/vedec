@@ -1,0 +1,43 @@
+name: Reindex
+
+on:
+  workflow_dispatch:
+  #schedule:
+  #  - cron: '0 6 * * *' # use https://crontab.guru/
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+  ELASTICSEARCH_PASSWORD: ${{ secrets.ELASTICSEARCH_PASSWORD }}
+  HYGRAPH_URL: ${{ secrets.HYGRAPH_URL }}
+
+jobs:
+  run-tournament:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shimataro/ssh-key-action@v2
+        with:
+          known_hosts: unnecessary
+          key: ${{ secrets.SSH_KEY }}
+          name: id_rsa_og_events
+          config: |
+            Host low
+              User oto
+              Hostname oto.srv4all.net
+              IdentityFile ~/.ssh/id_rsa_og_events
+              StrictHostKeyChecking no
+              ConnectTimeout 60
+              ConnectionAttempts 2
+          if_key_exists: fail
+
+      - name: Reindex
+        run: |
+          export DOCKER_HOST=ssh://low
+          ./bin/og-prod.sh run --remove-orphans --rm -d vedec-index
