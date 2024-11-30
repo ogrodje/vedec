@@ -148,3 +148,37 @@ Content-Type: application/json
     }
   }
 }
+
+### Hunspell
+# curl -X GET "localhost:9200/_analyze?pretty" -H 'Content-Type: application/json' -d'
+#{
+#  "tokenizer": "standard",
+#  "filter": [
+#    {
+#      "type": "hunspell",
+#      "locale": "en_US"
+#    }
+#  ],
+#  "text": "the foxes jumping quickly"
+#}
+#'
+GET localhost:9200/_analyze?pretty
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+
+{
+  "tokenizer": "standard",
+  "filter": [
+    {
+      "type": "hunspell",
+      "locale": "sl_SI",
+      "longest_only" : false
+    }
+  ],
+  "text": "Danes je lep sončen dan. Jutri je sobota. Potem nedelja."
+}
+
+
+###
+
