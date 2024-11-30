@@ -49,7 +49,6 @@ devenv.local.nix
 
 # other
 /out/
-/bin/
 /sandbox/
 
 # intellij
