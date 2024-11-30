@@ -10,6 +10,7 @@ and [hunspell](https://hunspell.github.io/) - spell checker and morphological an
 
 Additional language support is provided via custom [elasticsearch-analysis-lemmagen](https://github.com/vhyza/elasticsearch-analysis-lemmagen) build with `jLemmaGen`.
 
+**The indexer** is tuned to extract data from [HyGraph](https://hygraph.com/) - [GraphQL](https://graphql.org/)-based [Headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system). The [`EpisodesIndexDefinition.scala`](src/main/scala/EpisodesIndexDefinition.scala) keeps the index configuration and mapping, and the search query is defined in [`EpisodesIndexQueries.scala`](src/main/scala/EpisodesIndexQueries.scala)
 
 ## Development & compilation
 
