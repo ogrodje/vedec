@@ -61,6 +61,11 @@ jobs:
 
       - uses: sbt/setup-sbt@v1
 
+      - name: Build and push custom ElasticSearch
+        run: |
+          ./bin/og-dev.sh build es && \
+            docker push ghcr.io/ogrodje/elasticsearch:latest
+
       - run: sbt "test"
 
       - run: sbt "docker:publish"

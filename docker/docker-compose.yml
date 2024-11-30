@@ -1,9 +1,10 @@
 services:
 
   es:
-    # image: bitnami/elasticsearch:latest
     build:
+      context: .
       dockerfile: ./docker/es.Dockerfile
+    image: ghcr.io/ogrodje/elasticsearch:latest
     container_name: vedec-es
     ports:
       - "0.0.0.0:9200:9200"
