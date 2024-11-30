@@ -56,14 +56,15 @@ Content-Type: application/json
 
 ### Bit more advanced search 2
 < {%
-    request.variables.set("query", "rust")
+    request.variables.set("query", "žorž")
 %}
-// GET http://localhost:9200/episodes/_search
-GET http://localhost:4442/search
+GET http://localhost:9200/episodes/_search
+// GET http://localhost:4442/search
 Authorization: Basic {{username}} {{password}}
 Content-Type: application/json
 
 {
+  "_source": ["id","name","code","summary","machineSummary","show.name"],
   "query": {
     "bool": {
       "minimum_should_match": 1,
@@ -145,23 +146,17 @@ Content-Type: application/json
         "field": "topic.name.keyword",
         "size": 10
       }
+    },
+    "codes": {
+      "terms": {
+        "field": "code",
+        "size": 10
+      }
     }
   }
 }
 
 ### Hunspell
-# curl -X GET "localhost:9200/_analyze?pretty" -H 'Content-Type: application/json' -d'
-#{
-#  "tokenizer": "standard",
-#  "filter": [
-#    {
-#      "type": "hunspell",
-#      "locale": "en_US"
-#    }
-#  ],
-#  "text": "the foxes jumping quickly"
-#}
-#'
 GET localhost:9200/_analyze?pretty
 Authorization: Basic {{username}} {{password}}
 Content-Type: application/json
@@ -179,6 +174,19 @@ Content-Type: application/json
   "text": "Danes je lep sončen dan. Jutri je sobota. Potem nedelja."
 }
 
+### lemmagen
+GET localhost:9200/_analyze?pretty
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
 
-###
 
+{
+  "tokenizer": "standard",
+  "filter": [
+    {
+      "type": "lemmagen",
+      "lexicon": "sl"
+    }
+  ],
+  "text": "Danes je lep sončen dan. Jutri je sobota. Potem nedelja."
+}

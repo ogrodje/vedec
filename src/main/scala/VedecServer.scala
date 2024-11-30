@@ -20,6 +20,15 @@ final case class VedecServer(private val config: Config):
         response    = Response.json(esResponse.noSpaces)
         _          <- logInfo("Served search request")
       yield response
+    },
+    Method.GET / "query"  -> handler { (req: Request) =>
+      val rawQuery = req.queryParamOrElse("query", "")
+      val query    = EpisodesIndexQueries.query(rawQuery)
+      for
+        esResponse <- ZIO.serviceWithZIO[ElasticSearchIndex](_.search(query*))
+        response    = Response.json(esResponse.noSpaces)
+        _          <- logInfo(s"Served query request for $rawQuery")
+      yield response
     }
   ).handleErrorZIO(e => logError(s"Boom w/ $e").as(Response.badRequest(s"Boom w/ $e")))
 

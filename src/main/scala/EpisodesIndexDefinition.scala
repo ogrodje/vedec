@@ -11,11 +11,12 @@ object EpisodesIndexDefinition:
         ),
         "summary"             -> Json.obj(
           "type"     -> "text",
-          "analyzer" -> "sl_SI"
+          "analyzer" -> "lemmagen_lowercase_sl"
         ),
         "machineSummary"      -> Json.obj(
           "type"     -> "text",
-          "analyzer" -> "sl_SI"
+          // "analyzer" -> "sl_SI"
+          "analyzer" -> "lemmagen_lowercase_sl"
         ),
         "code"                -> Json.obj(
           "type" -> "keyword"
@@ -111,16 +112,28 @@ object EpisodesIndexDefinition:
       "number_of_replicas" -> 0,
       "analysis"           -> Json.obj(
         "analyzer" -> Json.obj(
-          "sl_SI" -> Json.obj(
+          "sl_SI"                 -> Json.obj(
             "tokenizer" -> "standard",
             "filter"    -> Json.arr(Json.fromString("lowercase"), Json.fromString("sl_SI"))
+          ),
+          "lemmagen_sl"           -> Json.obj(
+            "tokenizer" -> "standard",
+            "filter"    -> Json.arr(Json.fromString("lemmagen_filter_sl"))
+          ),
+          "lemmagen_lowercase_sl" -> Json.obj(
+            "tokenizer" -> "standard",
+            "filter"    -> Json.arr(Json.fromString("lemmagen_filter_sl"), Json.fromString("lowercase"))
           )
         ),
         "filter"   -> Json.obj(
-          "sl_SI" -> Json.obj(
+          "sl_SI"              -> Json.obj(
             "type"     -> "hunspell",
             "language" -> "sl_SI",
             "dedup"    -> false
+          ),
+          "lemmagen_filter_sl" -> Json.obj(
+            "type"    -> "lemmagen",
+            "lexicon" -> "sl"
           )
         )
       )
