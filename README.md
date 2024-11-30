@@ -3,12 +3,13 @@
 Vedec is an [ElasticSearch](https://www.elastic.co/elasticsearch)-based indexer and search engine
 for [Ogrodje](https://ogrodje.si).
 
-The engine is fine-tuned to work with the Slovenian language
-via [Hunspell token filter](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-hunspell-tokenfilter.html)
+The engine is hacked and fine-tuned to work with the Slovenian language.
+
+It uses the [Hunspell token filter](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-hunspell-tokenfilter.html)
 and [hunspell](https://hunspell.github.io/) - spell checker and morphological analyser.
 
-The ElasticSearch is hacked with additional plugins for Slovenian language such
-as [elasticsearch-analysis-lemmagen](https://github.com/vhyza/elasticsearch-analysis-lemmagen) w/ `jLemmaGen`.
+Additional language support is provided via custom [elasticsearch-analysis-lemmagen](https://github.com/vhyza/elasticsearch-analysis-lemmagen) build with `jLemmaGen`.
+
 
 ## Development & compilation
 
