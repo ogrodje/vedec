@@ -17,7 +17,9 @@ Additional language support is provided via custom [elasticsearch-analysis-lemma
 ```bash
 sbt Docker / publishLocal
 ./bin/og-dev.sh build
+./bin/og-dev.sh up # all services
 
+# individual (ElasticSearch needs to be booted)
 docker run -ti --rm ghcr.io/ogrodje/vedec server
 docker run -ti --rm ghcr.io/ogrodje/vedec index
 
