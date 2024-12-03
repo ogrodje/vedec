@@ -12,6 +12,13 @@ Additional Slovenian language support is provided via custom [elasticsearch-anal
 
 **The indexer** is tuned to extract data from [HyGraph](https://hygraph.com/) - [GraphQL](https://graphql.org/)-based [Headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system). The [`EpisodesIndexDefinition.scala`](src/main/scala/EpisodesIndexDefinition.scala) keeps the index configuration and mapping, and the search query is defined in [`EpisodesIndexQueries.scala`](src/main/scala/EpisodesIndexQueries.scala)
 
+## Docker Images
+
+```bash
+docker pull ghcr.io/ogrodje/elasticsearch:latest
+docker pull ghcr.io/ogrodje/vedec:latest
+```
+
 ## Development & compilation
 
 ```bash
