@@ -41,7 +41,7 @@ final case class VedecServer(private val config: Config):
 
 object VedecServer:
   def run(config: Config) =
-    ZIO.logInfo(s"Booting server on port ${config.port}") *>
+    ZIO.logInfo(s"Booting server on port ${config.port} w/ ${config.elasticSearchURL}") *>
       VedecServer(config).server
         .provide(
           Config.fromConfig(config),

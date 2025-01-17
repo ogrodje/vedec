@@ -3,7 +3,7 @@ import com.typesafe.sbt.packager.docker.Cmd
 import System.getenv
 import scala.util.Try
 
-val scala3Version = "3.6.1"
+val scala3Version = "3.6.2"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
@@ -38,8 +38,9 @@ lazy val root = project
       "-java-output-version",
       "21"
     ),
-    libraryDependencies ++= Seq("org.scalameta" %% "munit" % "1.0.2" % Test) ++
+    libraryDependencies ++= {
       Dependencies.zio ++ Dependencies.refined ++ Dependencies.circe ++ Dependencies.logging
+    }
   )
   .settings(
     Compile / mainClass              := Some("Main"),
