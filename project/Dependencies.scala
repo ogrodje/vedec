@@ -5,10 +5,10 @@ object Dependencies {
   type Modules = Seq[ModuleID]
 
   object Versions {
-    val circe: Version         = "0.15.0-M1"
+    val circe: Version         = "0.14.12"
     val flyway: Version        = "10.17.3"
     val postgresql: Version    = "42.7.4"
-    val zio: Version           = "2.1.13"
+    val zio: Version           = "2.1.17"
     val zioLogging: Version    = "2.3.2"
     val refined: Version       = "0.11.2"
   }
@@ -21,19 +21,19 @@ object Dependencies {
     "dev.zio" %% "zio-test-sbt",
     "dev.zio" %% "zio-test-magnolia"
   ).map(_ % Versions.zio % Test) ++ Seq(
-    "dev.zio" %% "zio-json"         % "0.7.4",
-    "dev.zio" %% "zio-http"         % "3.0.1",
-    "dev.zio" %% "zio-logging"      % "2.4.0",
-    "dev.zio" %% "zio-prelude"      % "1.0.0-RC37",
-    "dev.zio" %% "zio-interop-cats" % "23.1.0.3",
-    "dev.zio" %% "zio-cli"          % "0.7.0"
+    "dev.zio" %% "zio-json"         % "0.7.42",
+    "dev.zio" %% "zio-http"         % "3.2.0",
+    "dev.zio" %% "zio-logging"      % "2.5.0",
+    "dev.zio" %% "zio-prelude"      % "1.0.0-RC39",
+    "dev.zio" %% "zio-interop-cats" % "23.1.0.5",
+    "dev.zio" %% "zio-cli"          % "0.7.1"
   )
 
   lazy val logging: Modules = Seq(
     "dev.zio" %% "zio-logging",
     "dev.zio" %% "zio-logging-slf4j2"
   ).map(_ % Versions.zioLogging) ++ Seq(
-    "ch.qos.logback" % "logback-classic" % "1.5.16"
+    "ch.qos.logback" % "logback-classic" % "1.5.18"
   )
 
   lazy val refined: Modules = Seq(

@@ -1,9 +1,12 @@
 { pkgs, lib, config, inputs, ... }:
 
 {
+  name = "vedec";
   packages = [
   	pkgs.jq
 	pkgs.jnv
+	pkgs.k9s
+	pkgs.kubectx
   ];
 
   languages.scala = {
@@ -15,6 +18,9 @@
   enterShell = ''
   	echo "Entering..."
   	type javac && type sbt
+
+	alias k='microk8s kubectl'
+    kubens vedec-prod
   '';
 
   enterTest = ''
