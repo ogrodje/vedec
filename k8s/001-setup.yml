@@ -158,7 +158,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: search.ogrodje-one.ogrodje.si
+    - host: search.ogrodje.si
       http:
         paths:
           - path: /
