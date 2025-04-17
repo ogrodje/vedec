@@ -72,37 +72,3 @@ jobs:
         run: sbt "docker:publish"
         if: ${{ github.ref == 'refs/heads/main' }}
 
-  deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    needs: [ build-elasticsearch, test-and-build ]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: shimataro/ssh-key-action@v2
-        with:
-          known_hosts: unnecessary
-          key: ${{ secrets.SSH_KEY }}
-          name: id_rsa_og_events
-          config: |
-            Host low
-              User oto
-              Hostname oto.srv4all.net
-              IdentityFile ~/.ssh/id_rsa_og_events
-              StrictHostKeyChecking no
-              ConnectTimeout 90
-              ConnectionAttempts 3
-          if_key_exists: fail
-
-      - name: Deploy to Production
-        run: |
-          export DOCKER_HOST=ssh://low
-          ./bin/og-prod.sh pull && \
-          ./bin/og-prod.sh up -d --remove-orphans
-
-      - name: Reindex
-        run: |
-          export DOCKER_HOST=ssh://low
-          ./bin/og-prod.sh run --remove-orphans --rm -d vedec-index
